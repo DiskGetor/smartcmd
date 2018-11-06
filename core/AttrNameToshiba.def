@@ -1,0 +1,25 @@
+MAP_ITEM(5  ,  true, "Reallocated_Block_Count"      ,"")  // 05
+MAP_ITEM(9  ,  true, "Power_On_Hours_Count"         ,"")  // 09
+
+MAP_ITEM(12 ,  true, "Device_Power_Cycle_Count"     ,"")  // 0C
+
+MAP_ITEM(173,  true, "Nomalized_Media_Wear_Out"     ,"")  // AD
+MAP_ITEM(175,  true, "SSD_Failure_Mode_status"      ,"")  // AF
+MAP_ITEM(179,  true, "Used_Reserved_Block_Count"    ,"")  // B3
+
+MAP_ITEM(181,  true, "Program_Failed_Count"         ,"")  // B5
+MAP_ITEM(182,  true, "Erase_Fail_Count"             ,"")  // B6
+MAP_ITEM(183,  true, "SATA_Downshift_Count"  	    ,"")  // B7
+MAP_ITEM(184,  true, "ETE_Error_Detection_count"    ,"")  // B7
+MAP_ITEM(187,  true, "Reported_Uncorrectable_Errors","")  // BB
+
+MAP_ITEM(190,  true, "AirFlow_Temperature"          ,"")  // BE
+MAP_ITEM(192,  true, "Unexpected_Power_Loss_Count"  ,"")  // C0
+MAP_ITEM(194,  true, "Temperature_Celsius"          ,"")  // C2
+MAP_ITEM(197,  true, "Current_Pending_Sector"       ,"")  // C5
+MAP_ITEM(199,  true, "CRC_Error_Count"              ,"")  // C7
+
+MAP_ITEM(234,  true, "Thermal_Throttle_Status"      ,"")  // EA
+MAP_ITEM(241,  true, "Total_Host_Writes"            ,"")  // F1
+MAP_ITEM(242,  true, "Total_Host_Reads"             ,"")  // F2
+MAP_ITEM(249,  true, "NAND_Writes"  				,"")  // F9

@@ -1,0 +1,56 @@
+# ----------------------------------------------------------------
+# Configuration for SMART collector program - console version
+# ----------------------------------------------------------------
+
+# Working mode (JEDEC, MANUAL) - See explanation below for JEDEC & MANUAL mode 
+CONFIG_MODE = MANUAL
+
+# Capture frequency (hours)
+# Don't need this parameter if using JEDEC mode
+CONFIG_FREQ = 0.001
+
+# Total time for running test (hours)
+# Don't need this parameter if using JEDEC mode
+CONFIG_TIME = 1000
+
+# List of valid device path, separated by ';'
+# For Linux, use /dev/nvme0n1, /dev/sda, /dev/sdb
+# For Windows, use \\.\PhysicalDrive0;\\.\PhysicalDrive1
+CONFIG_DEVPATH = /dev/nvme0n1
+
+# Log file for saving smart data
+CONFIG_LOGFILE = ./vtView-NVMe-log-2018-07-17-2018-relesetest.txt
+
+# Verbose mode (TRUE, FALSE)
+CONFIG_VERBOSE = FALSE
+
+# ----------------------------------------------------------------
+# Important setting notes
+#-----------------------------------------------------------------
+
+# CONFIG_MODE = JEDEC --> Life Acceleration Monitor Mode
+#  + This mode setting is recommended for measuring Life Acceleration
+#    or Write Amplification.
+#  + To get accurate Life Acceleration or Write Amplification, run test
+#    for around 100 hours per recommendation from JEDEC 219A.
+#  + This mode sets log update frequency to 1 day, test duration is 100 hours
+#  + User can stop test manually using Ctrl C
+#
+# CONFIG_MODE = MANUAL --> Set logging frequency how you want to
+# This mode is recommended for:
+#  1. Temperature Characterization: set logging frequency to 0.5 hours or
+#     less, depending on how granular the temperature is changing
+#
+#  2. Quick WA check: set logging frequency to 0.5 hours, test duration
+#     is at least 2 hours. Check out Virtium endurance testing application
+#     note for recommendation.
+
+# Restart with System. 
+# This mode is useful when you anticipate power cycle during your test and 
+# want the logging to continue where it left off.
+# Please add SmartCmd -f [name of this config file] to startup script or 
+# startup menu manually.
+
+# ----------------------------------------------------------------
+# End
+# ----------------------------------------------------------------

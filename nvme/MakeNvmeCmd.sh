@@ -1,0 +1,1 @@
+cc -D_GNU_SOURCE -D__CHECK_ENDIAN__ -O2 -g -Wall -Werror -std=gnu99 -DNVME_VERSION='"1.5"' NvmeCmd.c -o NvmeCmd argconfig.o suffix.o parser.o nvme-print.o nvme-ioctl.o nvme-lightnvm.o fabrics.o json.o plugin.o intel-nvme.o lnvm-nvme.o memblaze-nvme.o wdc-nvme.o wdc-utils.o nvme-models.o huawei-nvme.o netapp-nvme.o  toshiba-nvme.o
