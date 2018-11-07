@@ -4,12 +4,8 @@
 #include "utility/misc/StdMacro.h"
 #include "utility/misc/StdHeader.h"
 
-// #include "NVMEStruct.h"
+#include "NVMEStruct.h"
 #include "CoreUtil.h"
-#include "NvmeData.h"
-
-#define READ_U16(value, ptr) value = (((U8)(ptr)[1]) << 8) | (((U8)(ptr)[0]) << 0)
-#define READ_U32(value, ptr) value = (((U8)(ptr)[3]) << 24) | (((U8)(ptr)[2]) << 16) | (((U8)(ptr)[1]) << 8) | (((U8)(ptr)[0]) << 0)
 
 // -----------------------------------------------------------------
 // Common enumeration
@@ -53,12 +49,21 @@ struct sIdentifySectorInfo
     bool IsSMARTEnabled;            // W85:0
 
     // SecureErase Feature
-    bool IsSecuritySupported;       // W82:1
-    bool IsUserPasswordPresent;     // W85:1
-    bool IsDeviceLocked;            // W128:2
-    bool IsDeviceFrozen;            // W128:3
-    bool IsPasswordAttemptExceeded; // W128:4
-    bool IsMasterPasswordMaximum;   // W128:8
+    bool IsSecuritySupported;               // W82:1
+    bool IsUserPasswordPresent;             // W85:1
+    bool IsSecurityFeatureSetSupported;     // W128:0
+    bool IsSecurityEnabled;                 // W128:1
+    bool IsDeviceLocked;                    // W128:2
+    bool IsDeviceFrozen;                    // W128:3
+    bool IsPasswordAttemptExceeded;         // W128:4
+    bool IsEnhancedSecurityEraseSupported;  // W128:5
+    bool IsMasterPasswordMaximum;           // W128:8
+
+    // Sanitize Feature
+    bool IsSanitizeAntifreezeLockExt;// W59:10
+    bool IsSanitizeSupported;        // W59:12
+    bool IsCryptoScrambleExt;        // W59:13
+    bool IsBlockEraseExt;            // W59:15
 
     U16 SecureEraseTime;            // W89
     U16 EnhancedSecureEraseTime;    // W90
@@ -99,6 +104,7 @@ struct sIdentifyInfo
     sIdentifySectorInfo SectorInfo;
 
     sIdentifyInfo();
+
     void reset();
     string toString() const;
     string toFeatureString() const;
@@ -326,19 +332,6 @@ struct sDeviceData
     void reset();
 };
 
-struct sHeaderLogData
-{
-    U32 timestamp;
-    string testname;
-    vector<string> device[6]; /*    0 model
-                                    1 port
-                                    2 serial number
-                                    3 type
-                                    4 identify
-                                    5 firmware slot
-                                */
-};
-
 typedef set<string> tSerialSet;
 
 // -----------------------------------------------------------------
@@ -371,8 +364,6 @@ bool SaveDriveInfo(const sDriveInfo& info, const string& filename);
 
 bool AppendHistory(const list<sDriveInfo>& data, const string& filename);
 bool AppendHistory(const list<sRawDriveInfo>& data, const string& filename);
-bool AppendHistory(const NvmeDevice &data, const string& filename);
-bool AppendHeader(const sHeaderLogData &data, const string& filename);
 
 // Refine history
 bool RefineHistory(sDeviceData& data, const string& filename);
@@ -383,7 +374,6 @@ U8 GetSubKey(U8 key);
 bool ReadAttribute(const sSmartInfo& info, U8 id, U32& value);           // Read raw value (4 bytes)
 bool ReadAttribute(const sSmartInfo& info, U8 id, double& value);        // Read raw value
 bool ReadAttribute(const sSmartInfo& info, U8 id, U32& low, U32& high);  // Read raw value (6 bytes)
-bool ReadAttributeValue(const sSmartInfo& info, U8 key, U32& value);     // Read attribute value
 eNandType GetNandType(const sSmartInfo& info, const string& serialNo = string());
 
 // Get pointer to DeviceInfo
@@ -410,8 +400,6 @@ string ToString(const sDeviceInfo& info);
 string ToString(const sDeviceData& data);
 string ToString(const list<sDriveInfo>& infoList);
 string ToString(const list<sRawDriveInfo>& infoList);
-string ToString(const NvmeDevice &data);
-string ToString(const sHeaderLogData &data);
 
 string ToVerboseString(const sSmartInfo& info);
 string ToVerboseString(const sIdentifyInfo& info);
@@ -421,18 +409,6 @@ string ToVerboseString(const sDataRetentionInfo& info);
 
 string ToShortString(const sDeviceInfo& info);
 string ToShortString(const tSerialMap& serialMap);
-
-string ParseIdenity(sIdentifyInfo &driveInfo, const U8 *buf);
-string ParseNvmeIdenity(const device_list_t &lists, const NvmeIdenStr &iden);
-string BuildIdentifylevel2(U32 data, U16 start, U16 count, const string *table, bool isend);
-string BuildPowerDescriptor(const device_list_t &lists, const NvmeIdenStr &iden);
-string toPrecisionString(const long double &number, const U16 &pre);
-string ParseNvmeFirmwareSlot(const firmware_slot_t &fs);
-
-string parseDetailSataSmart(const sSmartInfo &smartInfo, eVendorCode code);
-string mapDetailSataSmart(const sAttribute& attr, const eVendorCode code, const bool isend);
-string toToshibaDetailString(const sAttribute &attr, const U8 pos, const bool isend);
-U8 getDetailSataPos(const U8 id, const eVendorCode code);
 
 void GetPowerOffDataRetentionEstimate (eNandType nandType, U32 eraseCount, sDataRetentionInfo& info);
 

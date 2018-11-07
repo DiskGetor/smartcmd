@@ -1,5 +1,4 @@
 // #include "core/NVMEStruct.h"
-#include "NvmeCmd.h"
 #include "core/SmartUtil.h"
 #include "utility/misc/MiscUtil.h"
 #include "utility/misc/StringUtil.h"

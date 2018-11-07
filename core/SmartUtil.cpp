@@ -56,7 +56,7 @@ void SmartUtil::CorrectAttribute(sAttribute& attr)
     }
 }
 
-bool SmartUtil::ParseSmartAttribute(const unsigned char* valSector, const tThresholdMap& thresholdMap, sAttribute& attr, const eVendorCode vendor)
+bool SmartUtil::ParseSmartAttribute(const unsigned char* valSector, const tThresholdMap& thresholdMap, sAttribute& attr)
 {
     if (NULL == valSector) return false;
 
@@ -87,7 +87,7 @@ bool SmartUtil::ParseSmartAttribute(const unsigned char* valSector, const tThres
     // Fix name of attributes
 
     string name;
-    if(true == CoreUtil::LookupAttributeName(attr.ID, name, vendor))
+    if(true == CoreUtil::LookupAttributeName(attr.ID, name))
     {
         attr.Name = name;
     }
@@ -133,7 +133,7 @@ void SmartUtil::ParseSmartData(const sSmartData& smartData, sSmartInfo& smartInf
         for (int i = 0; i < 30; i++)
         {
             sAttribute attr;
-            if (true == ParseSmartAttribute(valPtr, thresholdMap, attr, smartData.VendorCode))
+            if (true == ParseSmartAttribute(valPtr, thresholdMap, attr))
             {
                 CorrectAttribute(attr);
                 smartInfo.AttrMap[attr.ID] = attr;
@@ -268,7 +268,6 @@ void SmartUtil::CorrectSmartInfo(const sSmartData& smartData, sSmartInfo &info)
     switch(smartData.VendorCode)
     {
         case eRealtekDevice: CorrectSmartInfo_Realtek(info); break;
-        case eToshibaDevice:
         case eUnknownVendor:
             // Testing for specific device
             if (true == CorrectSmartInfo_HyperstoneUSB(smartData.ValueSector, smartData.ThresholdSector, info)) break;

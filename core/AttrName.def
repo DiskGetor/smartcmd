@@ -26,7 +26,7 @@ MAP_ITEM(192,  true, "Sudden_Power_Lost_Count"     ,"Life Cumulative")  // C0
 MAP_ITEM(194,  true, "Temperature_Celsius"         ,"")  // C2
 MAP_ITEM(195,  true, "Hardware_ECC_Recovered"      ,"")  // C3
 MAP_ITEM(196,  true, "Reallocated_Event_Count"     ,"")  // C4
-MAP_ITEM(197,  true, "Current_Pending_Sector_Count","")  // C5
+MAP_ITEM(197,  true, "Current_Pending_Sector_Count","")  //C5
 MAP_ITEM(198, false, "Offline_Uncorrectable"       ,"")  // C6
 MAP_ITEM(199,  true, "UDMA_CRC_Error_Count"        ,"Life Cumulative")  // C7
 
@@ -42,3 +42,9 @@ MAP_ITEM(249,  true, "Remaining_Spare_Block_Count" ,"Life Cumulative")  // F9
 MAP_ITEM(250,  true, "Total_Written_To_NAND"       ,"Life Cumulative")  // FA - Uint = 32M
 MAP_ITEM(251,  true, "Unaligned_Access_Count"      ,"Life Cumulative")  // FB
 MAP_ITEM(252,  true, "Read_Fail_Count"             ,"Life Cumulative")  // FC
+
+
+
+
+
+

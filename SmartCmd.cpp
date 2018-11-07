@@ -9,7 +9,6 @@
 
 #include "AppData.h"
 #include "SmartCmd.h"
-#include "NvmeData.h"
 
 SmartCmd::SmartCmd()
 {

@@ -3,9 +3,6 @@
 
 #include "utility/misc/StdMacro.h"
 #include "utility/misc/StdHeader.h"
-#include "utility/device/VendorCode.h"
-
-#define NUMBER_VENDER_SUPPORT       2 // normal sata and toshiba
 
 enum eAttributeID
 {
@@ -21,16 +18,6 @@ enum eAttributeID
     ATTR_PROGRAM_FAIL = 0xB5,
     ATTR_ERASE_FAIL = 0xB6,
     ATTR_NAND_ENDURANCE = 0xA8,
-};
-
-enum eToshibaAttributeID
-{
-    TSB_ATTR_WEAR_OUT  = 0xAD,
-};
-
-enum eNvmeAttributeID
-{
-    NVME_PERCENTAGE_USED  = 0x05,
 };
 
 enum eIdentifyKey
@@ -58,7 +45,7 @@ public:
     struct sUtilData
     {
         bool m_ShowAttributeName;
-        tAttributeNameMap m_AttrNameMap[NUMBER_VENDER_SUPPORT];
+        tAttributeNameMap m_AttrNameMap;
         tIdentifyKeyMap m_IdentifyKeyMap;
         
         sUtilData();
@@ -68,7 +55,7 @@ public:
     
 public:
     static bool ValidateAttributeID(U8 id);
-    static bool LookupAttributeName(U8 id, string& name, const eVendorCode vendor = eUnknownVendor);
+    static bool LookupAttributeName(U8 id, string& name);
     static bool LookupAttributeNote(U8 id, string& note);
     static bool LookupAttributeText(U8 id, string&, string&);   // name:note
     static void LookupAttributeList(vector<string>& attrList);            // name

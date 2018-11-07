@@ -22,7 +22,7 @@ class SmartUtil
 {
 public: // Handle SMART data
     static void CorrectAttribute(sAttribute& attr);
-    static bool ParseSmartAttribute(const unsigned char* valSector, const tThresholdMap& thresholdMap, sAttribute& attr, const eVendorCode vendor);
+    static bool ParseSmartAttribute(const unsigned char* valSector, const tThresholdMap& thresholdMap, sAttribute& attr);
     static void ParseSmartThreshold(const unsigned char* thrSector, tThresholdMap& thresholdMap);
     static void ParseSmartData(const sSmartData& smartData, sSmartInfo& smartInfo, bool autoCorrect = true);
 

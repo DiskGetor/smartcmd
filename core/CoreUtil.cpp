@@ -8,37 +8,20 @@ void CoreUtil::sUtilData::InitAttrNameMap()
 {
     // Init AttributeName map
     typedef pair<U8, sAttributeParam> tItemInfo;
-    typedef struct AttributeStruct
+    tItemInfo itemArray[] = {
+        #define MAP_ITEM(code, show, name, note) tItemInfo(code, sAttributeParam(name, note, show)),
+        #include "AttrName.def"
+        #undef MAP_ITEM
+    };
+    
+    for (U32 i = 0, itemCount = sizeof (itemArray) / sizeof (itemArray[0]); i < itemCount; i++)
     {
-        U16 len;
-        tItemInfo *data;
-    } sAttributeStruct;
-    sAttributeStruct itemArray[NUMBER_VENDER_SUPPORT];
-    tItemInfo itemArray0[] = {
-            #define MAP_ITEM(code, show, name, note) tItemInfo(code, sAttributeParam(name, note, show)),
-            #include "AttrName.def"
-            #undef MAP_ITEM
-        };
-    itemArray[0].len = sizeof(itemArray0) / sizeof(itemArray0[0]);
-    itemArray[0].data = itemArray0;
-    tItemInfo itemArray1[] = {
-            #define MAP_ITEM(code, show, name, note) tItemInfo(code, sAttributeParam(name, note, show)),
-            #include "AttrNameToshiba.def"
-            #undef MAP_ITEM
-        };
-    itemArray[1].len = sizeof(itemArray1) /sizeof(itemArray1[0]);
-    itemArray[1].data = itemArray1;
-    for(U32 k = 0; k < NUMBER_VENDER_SUPPORT; k++)
-    {
-        for (U32 i = 0; i < itemArray[k].len; i++)
-        {
-            tItemInfo& info = itemArray[k].data[i];
-            sAttributeParam& param = info.second;
+        tItemInfo& info = itemArray[i];
+        sAttributeParam& param = info.second;
 
-            if ( m_ShowAttributeName || param.Show )
-            {
-                m_AttrNameMap[k][info.first] = info.second;
-            }
+        if ( m_ShowAttributeName || param.Show )
+        {
+            m_AttrNameMap[info.first] = info.second;
         }
     }
 }
@@ -84,13 +67,12 @@ bool CoreUtil::ValidateAttributeID(U8 id)
     return status;
 }
 
-bool CoreUtil::LookupAttributeName(U8 id, string& name, const eVendorCode vendor)
+bool CoreUtil::LookupAttributeName(U8 id, string& name)
 {   
     bool status = false;
-    U32 pos = (vendor == eToshibaDevice)? 1 : 0;
 
-    tAttributeNameMap::iterator iter = s_Data.m_AttrNameMap[pos].find(id);
-    if (iter != s_Data.m_AttrNameMap[pos].end())
+    tAttributeNameMap::iterator iter = s_Data.m_AttrNameMap.find(id);
+    if (iter != s_Data.m_AttrNameMap.end())
     {
         const sAttributeParam& param = iter->second;
         name = param.Name;
@@ -105,7 +87,7 @@ void CoreUtil::LookupAttributeList(vector<string>& attrList)
     attrList.clear();
 
     tAttributeNameMap::iterator iter;
-    for(iter = s_Data.m_AttrNameMap[0].begin(); iter != s_Data.m_AttrNameMap[0].end(); iter++)
+    for(iter = s_Data.m_AttrNameMap.begin(); iter != s_Data.m_AttrNameMap.end(); iter++)
     {
         const sAttributeParam& param = iter->second;
         attrList.push_back(param.Name);
@@ -117,7 +99,7 @@ void CoreUtil::LookupAttributeList(vector<pair<U8, string> >& attrList)
     attrList.clear();
 
     tAttributeNameMap::iterator iter;
-    for(iter = s_Data.m_AttrNameMap[0].begin(); iter != s_Data.m_AttrNameMap[0].end(); iter++)
+    for(iter = s_Data.m_AttrNameMap.begin(); iter != s_Data.m_AttrNameMap.end(); iter++)
     {
         U8 attrID = iter->first;
         const sAttributeParam& param = iter->second;
@@ -129,8 +111,8 @@ bool CoreUtil::LookupAttributeNote(U8 id, string& note)
 {
     bool status = false;
 
-    tAttributeNameMap::iterator iter = s_Data.m_AttrNameMap[0].find(id);
-    if (iter != s_Data.m_AttrNameMap[0].end())
+    tAttributeNameMap::iterator iter = s_Data.m_AttrNameMap.find(id);
+    if (iter != s_Data.m_AttrNameMap.end())
     {
         const sAttributeParam& param = iter->second;
         note = param.Note;
@@ -144,8 +126,8 @@ bool CoreUtil::LookupAttributeText(U8 id, string& name, string& note)
 {
     bool status = false;
 
-    tAttributeNameMap::iterator iter = s_Data.m_AttrNameMap[0].find(id);
-    if (iter != s_Data.m_AttrNameMap[0].end())
+    tAttributeNameMap::iterator iter = s_Data.m_AttrNameMap.find(id);
+    if (iter != s_Data.m_AttrNameMap.end())
     {
         const sAttributeParam& param = iter->second;
         name = param.Name;

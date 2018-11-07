@@ -1,15 +1,13 @@
 #include "AppMain.h"
-#include "AppData.h"
-#include "SmartCmd.h"
+#include "VscSm2246.h"
 #include "utility/misc/MiscUtil.h"
 
 int main(int argc, char *argv[])
 {
     MiscUtil::RequestAdminPermission();
 
-    LoadCoreData();
+    VscSm2246 tool;
 
-    SmartCmd tool;
     tool.setToolInfo(argc, argv);
     return tool.execTool();
 }

@@ -1,14 +1,10 @@
-CC  = gcc
-CXX = g++
+CC  ?= gcc
+CXX ?= g++
 
 #remove @ for no make command prints
 DEBUG = @
 
-ifeq ($(ENV),32)
-    APP_NAME = vtViewCmd_32b
-else
-    APP_NAME = vtViewCmd_64b
-endif
+APP_NAME = vtfa
 
 APP_DIR = .
 OUTPUT_DIR = $(APP_DIR)/output
@@ -17,8 +13,8 @@ OUTPUT_DIR = $(APP_DIR)/output
 # application
 # -------------------------------------------------------
 MAIN   = $(APP_DIR)
-NVME   = $(APP_DIR)/nvme
-LINUX  = $(NVME)/linux
+# NVME   = $(APP_DIR)/nvme
+# LINUX  = $(NVME)/linux
 PORT   = $(APP_DIR)/port/linuxtest
 UTIL   = $(APP_DIR)/utility
 CORE   = $(APP_DIR)/core
@@ -29,8 +25,8 @@ CRYPT  = $(UTIL)/crypt
 VSC    = $(UTIL)/vsc
 
 APP_INCLUDE_DIRS += -I $(MAIN)/
-APP_INCLUDE_DIRS += -I $(NVME)/
-APP_INCLUDE_DIRS += -I $(LINUX)/
+# APP_INCLUDE_DIRS += -I $(NVME)/
+# APP_INCLUDE_DIRS += -I $(LINUX)/
 APP_INCLUDE_DIRS += -I $(PORT)/
 APP_INCLUDE_DIRS += -I $(UTIL)/
 APP_INCLUDE_DIRS += -I $(CORE)/
@@ -40,15 +36,14 @@ APP_INCLUDE_DIRS += -I $(CRYPT)/
 APP_INCLUDE_DIRS += -I $(VSC)/
 
 APP_SRC_FILES += $(MAIN)/AppMain.cpp \
-                 $(MAIN)/AppData.cpp \
-                 $(MAIN)/SmartCmd.cpp \
-                 $(MAIN)/AppConfigFile.cpp 
+                 $(MAIN)/Sm2246.cpp \
+                 $(MAIN)/VscSm2246.cpp \
+                 $(MAIN)/EventLog.cpp 
 
 APP_SRC_FILES += $(CORE)/CoreData.cpp \
                  $(CORE)/CoreUtil.cpp \
                  $(CORE)/SmartUtil.cpp \
-                 $(CORE)/CommonStruct.cpp \
-                 $(CORE)/NvmeData.cpp 
+                 $(CORE)/CommonStruct.cpp 
 
 APP_SRC_FILES += $(PORT)/SystemUtil.cpp\
                  $(PORT)/PortUtil.cpp\
@@ -116,44 +111,13 @@ ifeq ($(ENV),32)
 	COMPILER_FLAGS += -m32
 endif
 
-COMPILER_FLAGS += -pipe -std=c++0x -O2 -std=gnu++0x -static -Wall -W -D_REENTRANT -fPIC -DNVME_VERSION='"1.5"'
+COMPILER_FLAGS += -pipe -std=c++0x -O2 -std=gnu++0x -static -Wall -W -D_REENTRANT -fPIC
 
 DEFINES       = -D__KERNEL__ -D__LINUX__ 
 
 LIBS          = -lm -ldl -pthread -lrt -lpthread
 
-OBJS          = $(NVME)/NvmeCmd.o \
-                $(NVME)/argconfig.o \
-                $(NVME)/suffix.o \
-                $(NVME)/parser.o \
-                $(NVME)/nvme-print.o \
-                $(NVME)/nvme-ioctl.o \
-                $(NVME)/nvme-lightnvm.o \
-                $(NVME)/fabrics.o \
-                $(NVME)/json.o \
-                $(NVME)/plugin.o \
-                $(NVME)/intel-nvme.o \
-                $(NVME)/lnvm-nvme.o \
-                $(NVME)/memblaze-nvme.o \
-                $(NVME)/wdc-nvme.o \
-                $(NVME)/wdc-utils.o \
-                $(NVME)/nvme-models.o \
-                $(NVME)/huawei-nvme.o \
-                $(NVME)/netapp-nvme.o \
-                $(NVME)/toshiba-nvme.o
-
-# -------------------------------------------------------
-# Precompiler
-# -------------------------------------------------------
-PRE_COMP_FLAG   += -D_GNU_SOURCE -D__CHECK_ENDIAN__ -O2 -g -Wall -Werror -std=gnu99 -X -DNVME_VERSION='"1.5"'
-
-PRE_COMP_SRC    += $(NVME)/NvmeCmd.c 
-
-PRE_COMP_INC    += -I $(NVME)/
-PRE_COMP_INC    += -I $(LINUX)/
-# -------------------------------------------------------
-
-MAKE_CMD = $(CXX) $(COMPILER_FLAGS) $(DEFINES) $(APP_SRC_FILES) $(SUB_INCLUDE) $(APP_INCLUDE_DIRS) $(LIBS) -o $(OUTPUT_DIR)/$(APP_NAME) $(OBJS)
+MAKE_CMD = $(CXX) $(COMPILER_FLAGS) $(DEFINES) $(APP_SRC_FILES) $(SUB_INCLUDE) $(APP_INCLUDE_DIRS) $(LIBS) -o $(OUTPUT_DIR)/$(APP_NAME)
 
 all:
 	$(MAKE_CMD)
