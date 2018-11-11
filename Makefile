@@ -1,44 +1,31 @@
-CC  ?= gcc
-CXX ?= g++
-
-#remove @ for no make command prints
-DEBUG = @
-
+# Flags
+CXXFLAGS        = -std=c++11 -O2 -MD -Wall -Wextra -g
+LIBS          = -lm -ldl -pthread -lrt -lpthread
+DEFINES       = -D__KERNEL__ -D__LINUX__
+# Compiler, tools
+CC              ?= gcc
+CXX             ?= g++
+# Executable 
 APP_NAME = vtfa
+# Define directories
+APP             = .
+PORT            = port/linuxtest
+UTIL            = utility
+CORE            = core
+MISC            = $(UTIL)/misc
+CMD             = $(UTIL)/cmd
+DEV             = $(UTIL)/device
+CRYPT           = $(UTIL)/crypt
+VSC             = $(UTIL)/vsc
+OUTPUT_DIR      = output
 
-APP_DIR = .
-OUTPUT_DIR = $(APP_DIR)/output
 
-# -------------------------------------------------------
-# application
-# -------------------------------------------------------
-MAIN   = $(APP_DIR)
-# NVME   = $(APP_DIR)/nvme
-# LINUX  = $(NVME)/linux
-PORT   = $(APP_DIR)/port/linuxtest
-UTIL   = $(APP_DIR)/utility
-CORE   = $(APP_DIR)/core
-MISC   = $(UTIL)/misc
-CMD    = $(UTIL)/cmd
-DEV    = $(UTIL)/device
-CRYPT  = $(UTIL)/crypt
-VSC    = $(UTIL)/vsc
+CFLAGS			= -I$(APP) -I$(PORT) -I$(UTIL) -I$(CORE) -I$(MISC) -I$(CMD) -I$(DEV) -I$(CRYPT)
 
-APP_INCLUDE_DIRS += -I $(MAIN)/
-# APP_INCLUDE_DIRS += -I $(NVME)/
-# APP_INCLUDE_DIRS += -I $(LINUX)/
-APP_INCLUDE_DIRS += -I $(PORT)/
-APP_INCLUDE_DIRS += -I $(UTIL)/
-APP_INCLUDE_DIRS += -I $(CORE)/
-APP_INCLUDE_DIRS += -I $(MISC)/
-APP_INCLUDE_DIRS += -I $(CMD)/
-APP_INCLUDE_DIRS += -I $(CRYPT)/
-APP_INCLUDE_DIRS += -I $(VSC)/
-
-APP_SRC_FILES += $(MAIN)/AppMain.cpp \
-                 $(MAIN)/Sm2246.cpp \
-                 $(MAIN)/VscSm2246.cpp \
-                 $(MAIN)/EventLog.cpp 
+APP_SRC_FILES += AppMain.cpp \
+                 Sm2246.cpp \
+                 VscSm2246.cpp \
+                 EventLog.cpp
 
 APP_SRC_FILES += $(CORE)/CoreData.cpp \
                  $(CORE)/CoreUtil.cpp \
@@ -107,21 +94,30 @@ APP_SRC_FILES += $(VSC)/smi/SM2250Util.cpp \
                  $(VSC)/virtium/VscVirtiumProtocol.cpp \
                  $(VSC)/virtium/VscVirtiumFunction.cpp 
 
-ifeq ($(ENV),32)
-	COMPILER_FLAGS += -m32
-endif
 
-COMPILER_FLAGS += -pipe -std=c++0x -O2 -std=gnu++0x -static -Wall -W -D_REENTRANT -fPIC
+OBJECTS      	= $(patsubst %.cpp, $(OUTPUT_DIR)/%.o, $(APP_SRC_FILES))
+DEPS 			= $(OBJECTS:.o=.d)
 
-DEFINES       = -D__KERNEL__ -D__LINUX__ 
+.PHONY: dirs all clean
+all: dirs $(OUTPUT_DIR)/$(APP_NAME)
 
-LIBS          = -lm -ldl -pthread -lrt -lpthread
+dirs:
+	@echo "Creating directories"
+	@mkdir -p $(OUTPUT_DIR)
+	@mkdir -p $(dir $(OBJECTS))
 
-MAKE_CMD = $(CXX) $(COMPILER_FLAGS) $(DEFINES) $(APP_SRC_FILES) $(SUB_INCLUDE) $(APP_INCLUDE_DIRS) $(LIBS) -o $(OUTPUT_DIR)/$(APP_NAME)
+	
+$(OUTPUT_DIR)/%.o: %.cpp
+	@echo "Compiling $< --> $@"
+	@$(CXX) -c -o $@ $< $(CXXFLAGS) $(CFLAGS) $(DEFINES) $(LIBS)
 
-all:
-	$(MAKE_CMD)
-	$(POST_MAKE_CMD)
+$(OUTPUT_DIR)/$(APP_NAME): $(OBJECTS)
+	@echo "Linking: $@"
+	@$(CXX) -o $@ $^ $(CXXFLAGS) $(CFLAGS) $(DEFINES) $(LIBS)
+	@echo "Executable file: $@"
 
 clean:
-	rm -f $(OUTPUT_DIR)/$(APP_NAME)
+	@rm -rf $(OUTPUT_DIR)
+
+# Add dependency files, if they exist
+-include $(DEPS)
